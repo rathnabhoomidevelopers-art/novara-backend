@@ -5,7 +5,18 @@ const mongoclient = require("mongodb").MongoClient;
 const app = express();
 const connectionString = process.env.MONGO_URI || "mongodb://127.0.0.1:27017";
 
-app.use(cors());
+const corsOptions = {
+  origin: [
+    "https://www.novaranatureestates.com",
+    "https://novaranatureestates.com",
+  ], 
+  methods: ["GET", "POST"],
+  allowedHeaders: ["Content-Type"],
+  preflightContinue: false,
+};
+
+
+app.use(cors(corsOptions));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
