@@ -9,12 +9,22 @@ const formRoutes = require("./routes/form.routes");
 
 const app = express();
 
+// Handle CORS + preflight for ALL routes
 app.use(cors(corsOptions));
-app.options('(.*)', cors(corsOptions)); // ← fixed wildcard
+app.use((req, res, next) => {
+  if (req.method === 'OPTIONS') {
+    res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
+    res.header('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type');
+    return res.sendStatus(204);
+  }
+  next();
+});
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+// DB connect per request (serverless-safe)
 app.use(async (req, res, next) => {
   try {
     await connectDB();
