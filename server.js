@@ -9,13 +9,12 @@ const formRoutes = require("./routes/form.routes");
 
 const app = express();
 
-// ─── MIDDLEWARE ───────────────────────────────────────────────────────────────
 app.use(cors(corsOptions));
-app.options('*', cors(corsOptions));
+app.options('(.*)', cors(corsOptions)); // ← fixed wildcard
+
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// ─── DB connect per request (serverless-safe) ────────────────────────────────
 app.use(async (req, res, next) => {
   try {
     await connectDB();
@@ -26,19 +25,15 @@ app.use(async (req, res, next) => {
   }
 });
 
-// ─── ROUTES ───────────────────────────────────────────────────────────────────
 app.use("/api/chat", chatRoutes);
 app.use("/api/reviews", reviewRoutes);
 app.use("/", formRoutes);
 
-// ─── GLOBAL ERROR HANDLER ────────────────────────────────────────────────────
 app.use((err, req, res, next) => {
-  console.error('Crashed:', err.message);
   res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
   res.status(500).json({ error: err.message });
 });
 
-// ─── LOCAL ONLY ───────────────────────────────────────────────────────────────
 if (process.env.NODE_ENV !== 'production') {
   const PORT = process.env.PORT || 3001;
   app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
