@@ -1,7 +1,8 @@
-const Contact = require("../models/contact.model");
-const Inquiry = require("../models/inquiry.model");
-const Popup   = require("../models/popup.model");
-const Blog    = require("../models/blog.model");
+const Contact  = require("../models/contact.model");
+const Inquiry  = require("../models/inquiry.model");
+const Popup    = require("../models/popup.model");
+const Blog     = require("../models/blog.model");
+const Brochure = require("../models/brochure.model");
 
 const SUCCESS_MSG = "Thank You, Our team will reach you soon!.";
 const ERROR_MSG   = "Something went wrong. Please try again later.";
@@ -73,6 +74,21 @@ exports.submitBlog = async (req, res) => {
     res.send(SUCCESS_MSG);
   } catch (err) {
     console.error("DB ERROR [blogs]:", err);
+    res.status(500).send(ERROR_MSG);
+  }
+};
+
+exports.submitBrochure = async (req, res) => {
+  try {
+    const doc = new Brochure({
+      name:  req.body.name,
+      email: req.body.email,
+      phone: req.body.phone,
+    });
+    await doc.save();
+    res.send(SUCCESS_MSG);
+  } catch (err) {
+    console.error("DB ERROR [brochure]:", err);
     res.status(500).send(ERROR_MSG);
   }
 };
