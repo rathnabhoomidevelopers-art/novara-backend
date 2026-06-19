@@ -1,4 +1,5 @@
 require("dotenv").config();
+// Ensure JWT_SECRET is set in .env for production
 const express = require("express");
 const cors = require("cors");
 const connectDB = require("./config/db");
@@ -6,6 +7,8 @@ const corsOptions = require("./config/cors");
 const chatRoutes = require("./routes/chat.routes");
 const reviewRoutes = require("./routes/review.routes");
 const formRoutes = require("./routes/form.routes");
+const authRoutes = require("./routes/auth.routes");
+const usersRoutes = require("./routes/users.routes");
 
 const app = express();
 
@@ -35,9 +38,11 @@ app.use(async (req, res, next) => {
   }
 });
 
-app.use("/api/chat", chatRoutes);
+app.use("/api/auth",    authRoutes);
+app.use("/api/users",   usersRoutes);
+app.use("/api/chat",    chatRoutes);
 app.use("/api/reviews", reviewRoutes);
-app.use("/", formRoutes);
+app.use("/",            formRoutes);
 
 app.use((err, req, res, next) => {
   res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
